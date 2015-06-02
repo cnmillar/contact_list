@@ -3,13 +3,10 @@ require_relative 'contact_database'
 require 'pry'
 
 csv_database = ContactDatabase.new("contacts.csv")
-# Add contacts from csv file to database
 csv_contacts = csv_database.read_contacts
 csv_contacts.each do |contact|
-	Contact.create(contact[0], contact[1])
+	Contact.create(contact[0], contact[1], contact[2], contact[3])
 end
-
-# binding.pry
 
 case ARGV[0].downcase
 
@@ -25,17 +22,34 @@ when "new"
 	name = STDIN.gets.chomp
 	puts "What is their email address?"
 	email = STDIN.gets.chomp
+	phone = []
+	label = []
+	answer = "yes"
 
-	new_contact = Contact.new(name,email) 		# make new contact instance
-	Contact.create(name, email)								# add new contact to the class database
-	csv_database.add_contact(name,email)    	# add to csv database
-	puts new_contact.to_s											# spit out new contact's information
+	while answer == "yes"
+		puts "Would you like to add a new phone number (YES or NO)?"
+		answer = STDIN.gets.chomp
+		if answer.downcase == "yes"
+			puts "What label would you like to give the phone number (e.g., mobile)?"
+			label << STDIN.gets.chomp
+			puts "What is their phone number?"
+			phone << STDIN.gets.chomp
+		end
+	end
+	puts phone.inspect
+	if Contact.contact_replicate?(email)
+		puts "Contact already exists. Use 'find' to search for '#{email}'."
+	else
+		contact_string = Contact.create(name, email, phone, label)					
+		csv_database.add_contact(name,email, phone, label)    	
+		puts contact_string					
+	end				
 
 when "list"
-	puts Contact.all
+	Contact.all
 
 when "show"
-	id = ARGV[1].to_i + 1
+	id = ARGV[1].to_i - 1
 	puts Contact.show(id)
 
 when "find"

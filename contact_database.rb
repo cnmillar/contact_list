@@ -11,9 +11,9 @@ class ContactDatabase
 		@contacts = CSV.read(@filename)
 	end
 
-	def add_contact(name, email)
+	def add_contact(name, email, phone, label)
 		CSV.open(@filename, "a+") do |csv|
-			csv << [name, email]
+			csv << [name, email, phone, label]
 		end
 	end
 end
