@@ -12,7 +12,7 @@ class ContactDatabase
 	end
 
 	def add_contact(name, email)
-		CSV.open(@filename, "a") do |csv|
+		CSV.open(@filename, "a+") do |csv|
 			csv << [name, email]
 		end
 	end

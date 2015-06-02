@@ -6,9 +6,10 @@ csv_database = ContactDatabase.new("contacts.csv")
 # Add contacts from csv file to database
 csv_contacts = csv_database.read_contacts
 csv_contacts.each do |contact|
-	Contact.new(contact[0],contact[1])
 	Contact.create(contact[0], contact[1])
 end
+
+# binding.pry
 
 case ARGV[0].downcase
 
@@ -31,15 +32,13 @@ when "new"
 	puts new_contact.to_s											# spit out new contact's information
 
 when "list"
-	puts Contact.all_contacts
+	puts Contact.all
 
 when "show"
-	id = AGRV[1]
-	# show(id)
+	id = ARGV[1].to_i + 1
+	puts Contact.show(id)
 
 when "find"
 	search_term = ARGV[1]
-	# Contact.find(search_term)
-	# search for name "search_term" and spit it out
-
+	puts Contact.find(search_term)
 end
