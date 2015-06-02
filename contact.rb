@@ -18,14 +18,15 @@ class Contact
  
   def to_s
     # TODO: return string representation of Contact
-    "#{@name} (#{@email})"
+    "#{@name} (#{@email})" # also need id number
   end
  
   ## Class Methods
   class << self
+    attr_accessor :all_contacts
     def create(name, email)
       # TODO: Will initialize a contact as well as add it to the list of contacts
-      
+
     end
  
     def find(index)
@@ -39,7 +40,7 @@ class Contact
     
     def show
       # TODO: Show a contact, based on ID
-      @@all_contacts
+      @@all_contacts.inspect
     end
     
   end

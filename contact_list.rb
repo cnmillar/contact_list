@@ -3,6 +3,12 @@ require_relative 'contact_database'
 require 'pry'
 
 csv_database = ContactDatabase.new("contacts.csv")
+# Add contacts from csv file to database
+csv_contacts = csv_database.read_contacts
+csv_contacts.each do |contact|
+	Contact.new(contact[0],contact[1])
+	Contact.create(contact[0], contact[1])
+end
 
 case ARGV[0].downcase
 
@@ -25,15 +31,14 @@ when "new"
 	puts new_contact.to_s											# spit out new contact's information
 
 when "list"
-
+	puts Contact.all_contacts
 
 when "show"
-	# id = AGRV[1]
+	id = AGRV[1]
 	# show(id)
-	puts Contact.show.inspect
 
 when "find"
-	# search_term = ARGV[1]
+	search_term = ARGV[1]
 	# Contact.find(search_term)
 	# search for name "search_term" and spit it out
 

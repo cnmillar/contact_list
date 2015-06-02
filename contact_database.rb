@@ -1,9 +1,8 @@
 ## TODO: Implement CSV reading/writing
 require 'csv'
 
-# attr_reader :contacts
-
 class ContactDatabase
+	attr_reader :contacts
 	def initialize(filename)
 		@filename = filename
 	end
