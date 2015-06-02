@@ -19,9 +19,10 @@ when "new"
 	puts "What is their email address?"
 	email = STDIN.gets.chomp
 
-	Contact.new(name,email) 			# make new contact instance
-	Contact.create(name, email)		# add new contact to the class database
-	csv_database.add_contact(name,email)    # add to csv database
+	new_contact = Contact.new(name,email) 		# make new contact instance
+	Contact.create(name, email)								# add new contact to the class database
+	csv_database.add_contact(name,email)    	# add to csv database
+	puts new_contact.to_s											# spit out new contact's information
 
 when "list"
 
