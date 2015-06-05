@@ -5,7 +5,7 @@ class Contact
  
   @@all_contacts = []
 
-  attr_accessor :name, :email, :phone, :label
+  attr_reader :name, :email, :phone, :label
 
   def initialize(name, email, phone, label)
     @name = name
@@ -18,6 +18,9 @@ class Contact
     (0..@@all_contacts.length-1).each do |contact_id|
       (id = contact_id + 1) if (self == @@all_contacts[contact_id])
     end
+
+    # binding.pry
+
     if self.phone.length == 1
       "ID ##{id}: #{@name} (#{@email}, #{@phone.length} phone number stored)"
     else
@@ -53,7 +56,6 @@ class Contact
     def contact_replicate?(email)
       replicate = false
       @@all_contacts.each do |contact|
-        # binding.pry
         replicate = true if contact.email.downcase.include?(email.downcase)
       end
       replicate

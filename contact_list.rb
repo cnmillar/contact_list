@@ -36,11 +36,16 @@ when "new"
 			phone << STDIN.gets.chomp
 		end
 	end
+
+	phone = nil if phone.empty?
+
 	puts phone.inspect
+
 	if Contact.contact_replicate?(email)
 		puts "Contact already exists. Use 'find' to search for '#{email}'."
 	else
-		contact_string = Contact.create(name, email, phone, label)					
+		contact_string = Contact.create(name, email, phone, label)	
+		binding.pry				
 		csv_database.add_contact(name,email, phone, label)    	
 		puts contact_string					
 	end				
