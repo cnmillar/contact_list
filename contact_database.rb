@@ -14,12 +14,12 @@ class ContactDatabase
 	def add_contact(name, email, phone, label)
 		if phone.length <= 1
 			CSV.open(@filename, "a+") do |csv|
-				csv << [name, email, phone[0], label[0]]
+				csv << [name, email, "#{label[0]}: #{phone[0]}"]
 			end
 		else
 			(0..phone.length-1).each do |num|
 				CSV.open(@filename, "a+") do |csv|
-					csv << [name, email, phone[num], label[num]]
+					csv << [name, email, "#{label[num]}: #{phone[num]}"]
 				end
 			end
 		end

@@ -1,5 +1,4 @@
-require './contact_database.rb'
-require 'pry'
+
 
 class Contact
  
@@ -18,8 +17,6 @@ class Contact
     (0..@@all_contacts.length-1).each do |contact_id|
       (id = contact_id + 1) if (self == @@all_contacts[contact_id])
     end
-
-    # binding.pry
 
     if self.phone.length == 1
       "ID ##{id}: #{@name} (#{@email}, #{@phone.length} phone number stored)"
