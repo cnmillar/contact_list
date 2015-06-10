@@ -1,7 +1,9 @@
 require 'pg'
 require 'pry'
+require './connection'
 
-class Contact
+
+class Contact < Connection
 
 	attr_reader :firstname, :lastname, :email, :id
 
@@ -13,27 +15,12 @@ class Contact
     @id = id
   end
 
-  # Open connection to locally hosted contacts database
-  def self.connect
-		begin
-		  @@conn = PG.connect(
-				:dbname => 'contacts'
-		  )
-		rescue PG::ConnectionBad
-		  puts "Sorry, there is something wrong with your credentials"
-		end
-		@@conn
-  end
-
-  def self.disconnect
-  	@@conn.close
-  end
-
 ### INSTANCE METHODS ###
 
 	# Save new contact to database
   def save!
-    pg_result = @@conn.exec_params("INSERT INTO contacts (firstname, lastname, email) VALUES ('#{firstname}', '#{lastname}', '#{email}')")  	
+    pg_result = @@conn.exec_params("INSERT INTO contacts (firstname, lastname, email) VALUES ('#{firstname}', '#{lastname}', '#{email}') returning id") 
+    pg_result.to_a[0]["id"].to_i
   end
 
 ### CLASS METHODS ###
@@ -54,30 +41,30 @@ class Contact
 
 	# Find contact from id
   def self.find(id)
-  	pg_result = @@conn.exec_params("SELECT * FROM contacts WHERE id = #{id}")
+  	pg_result = @@conn.exec_params("SELECT * FROM contacts WHERE id = $1", [id])
   	self.to_array(pg_result).first
   end
 
     # Remove contact instance from database
   def self.destroy(id)
-  	@@conn.exec_params("DELETE FROM contacts WHERE id = #{id};")
+  	@@conn.exec_params("DELETE FROM contacts WHERE id = $1;", [id])
   end
 
   # Show all entries
   def self.all
-  	pg_result = @@conn.exec_params("SELECT * FROM contacts;")
+  	pg_result = @@conn.exec("SELECT * FROM contacts;")
   	to_array(pg_result)
   end
 
   # Search by lastname
   def self.find_all_by_lastname(lastname)
-  	pg_result = @@conn.exec_params("SELECT * FROM contacts WHERE lastname = '#{lastname.capitalize}';")
+  	pg_result = @@conn.exec_params("SELECT * FROM contacts WHERE lastname = $1;", [lastname.capitalize])
   	to_array(pg_result)
   end
 
   # Search by email
   def self.find_by_email(email)
-  	pg_result = @@conn.exec_params("SELECT * FROM contacts WHERE email = '#{email}';")
+  	pg_result = @@conn.exec_params("SELECT * FROM contacts WHERE email = $1;", [email])
   	to_array(pg_result)
   end
 

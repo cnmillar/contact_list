@@ -1,8 +1,9 @@
 #!/usr/local/rvm/rubies/ruby-2.1.3/bin/ruby
 require './contact'
+require './phone'
 require 'pry'
 
-Contact.connect
+Connection.connect
 
 def new_contact
 	puts "What is the first name of your new contact?"
@@ -12,8 +13,24 @@ def new_contact
 	puts "What is their email address?"
 	email = STDIN.gets.chomp
 
+	phone = []
+	label = []
+	new_phone = "yes"
+	while  new_phone == "yes"
+		puts "Would you like to add a phone number?"
+		new_phone = STDIN.gets.chomp.downcase 
+		if new_phone == "yes"
+			puts "What is the number?"
+			phone << STDIN.gets.chomp
+			puts "How would you like to label this phone (e.g., mobile, home)?"
+			label << STDIN.gets.chomp
+		end
+	end
+
 	new_contact = Contact.new(lastname, firstname, email) 
-	new_contact.save!		
+	contact_id = new_contact.save!		
+	new_phone = Phone.new(contact_id, label, phone)
+	new_phone.save!
 end
 
 def show(id)
@@ -95,4 +112,5 @@ case ARGV[0].downcase
 	when "find"
 		find
 end
-Contact.disconnect
+
+Connection.disconnect
