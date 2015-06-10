@@ -1,68 +1,98 @@
 #!/usr/local/rvm/rubies/ruby-2.1.3/bin/ruby
-puts "hello world"
 require './contact'
-require  './contact_database'
-# require 'pry'
+require 'pry'
 
-csv_database = ContactDatabase.new("contacts.csv")
-csv_contacts = csv_database.read_contacts
-csv_contacts.each do |contact|
-	Contact.create(contact[0], contact[1], contact[2], contact[3])
+Contact.connect
+
+def new_contact
+	puts "What is the first name of your new contact?"
+	firstname = STDIN.gets.chomp
+	puts "What is the last name of your new contact?"
+	lastname = STDIN.gets.chomp
+	puts "What is their email address?"
+	email = STDIN.gets.chomp
+
+	new_contact = Contact.new(lastname, firstname, email) 
+	new_contact.save!		
 end
 
+def show(id)
+	instance_result = Contact.find(id)
+	"#{instance_result.id}: #{instance_result.firstname} #{instance_result.lastname} (#{instance_result.email})"
+end
 
-def run 
-	case ARGV[0].downcase
+def delete
+	list
+	puts "Which id number would you like to delete?"
+	id = STDIN.gets.chomp
+	contact_string = show(id)
+	Contact.destroy(id)
+	puts "Contact deleted: #{contact_string}"
+end
+
+def loop_over_results(array)
+	array.each do |row|
+		puts "#{row.id}: #{row.firstname} #{row.lastname} (#{row.email})"
+	end
+end
+
+def list
+	instance_result = Contact.all
+	loop_over_results(instance_result)
+end
+
+def find
+	search_term = ARGV[1]
+	if search_term.include? '@'
+		instance_result = Contact.find_by_email(search_term)
+		loop_over_results(instance_result)
+	else
+		instance_result = Contact.find_all_by_lastname(search_term)
+		loop_over_results(instance_result)
+	end
+end
+
+def update
+	list
+	puts "Which contact's id number would you like to update?"
+	id = STDIN.gets.chomp
+	puts "What would you like the contact's first name to be?"
+	firstname = STDIN.gets.chomp
+	puts "What would you like the contact's last name to be?"
+	lastname = STDIN.gets.chomp
+	puts "What would you like the contact's email to be??"
+	email = STDIN.gets.chomp
+
+	Contact.update(id, firstname, lastname, email)
+end
+
+case ARGV[0].downcase
 	when "help"
 		puts "Here is a list of available commands:
 		new - Create a new contact
+		update - Update contact
 		list - List all contacts
-		show - Show a contact
-		find - Find a contact"
+		show - Show a contact by id number
+		find - Find a contact by last name or email
+		delete - Delete contact"
 
 	when "new"
-		puts "What is the name of the new contact?"
-		name = STDIN.gets.chomp
-		puts "What is their email address?"
-		email = STDIN.gets.chomp
-		phone = []
-		label = []
-		answer = "yes"
+		new_contact
 
-		while answer == "yes"
-			puts "Would you like to add a new phone number (YES or NO)?"
-			answer = STDIN.gets.chomp
-			if answer.downcase == "yes"
-				puts "What label would you like to give the phone number (e.g., mobile)?"
-				label << STDIN.gets.chomp
-				puts "What is their phone number?"
-				phone << STDIN.gets.chomp
-			end
-		end
+	when "update"
+		update
 
-		phone = nil if phone.empty?
-
-		puts phone.inspect
-
-		if Contact.contact_replicate?(email)
-			puts "Contact already exists. Use 'find' to search for '#{email}'."
-		else
-			contact_string = Contact.create(name, email, phone, label)	
-			csv_database.add_contact(name,email, phone, label)    	
-			puts contact_string					
-		end				
-
-	when "list"
-		Contact.all
+	when "delete"
+		delete
 
 	when "show"
-		id = ARGV[1].to_i - 1
-		puts Contact.show(id)
+		id = ARGV[1].to_i
+		puts show(id)
+
+	when "list"
+		list
 
 	when "find"
-		search_term = ARGV[1]
-		puts Contact.find(search_term)
-	end
-end 
-
-run
+		find
+end
+Contact.disconnect

@@ -1,9 +1,0 @@
-Notes: 
-
-1. Create a new database
-
-			$ psql postgres
-			postgres=# CREATE DATABASE contacts;
-			$psql name_of_database < load_sql_file.sql
-
-* Make sure to require 'pg' gem in Ruby script.
