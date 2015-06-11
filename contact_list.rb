@@ -1,5 +1,6 @@
 #!/usr/local/rvm/rubies/ruby-2.1.3/bin/ruby
 require 'active_record'
+# require './overwrite'
 require './setup'
 require './contact'
 require './phone'
@@ -61,12 +62,21 @@ end
 
 def find
 	search_term = ARGV[1]
-	if search_term.include? '@'
-		instance_result = Contact.find_by_email(search_term)
-		loop_over_results(instance_result)
+
+	puts "What would you like to search by? 
+	1. First name
+	2. Last name
+	3. Email address"
+	search_by = STDIN.gets.chomp
+	case search_by
+	when "1"
+		loop_over_results(Contact.where("firstname = ?", [search_term]))
+	when "2"
+		loop_over_results(Contact.where("lastname = ?", [search_term]))
+	when "3"
+		loop_over_results(Contact.where("email = ?", [search_term]))
 	else
-		instance_result = Contact.find_all_by_lastname(search_term)
-		loop_over_results(instance_result)
+		raise "Please choose 1, 2 or 3."
 	end
 end
 
