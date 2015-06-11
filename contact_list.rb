@@ -35,29 +35,28 @@ def new_contact
 
 end
 
-# 
 def show(id)
 	contact_info = Contact.find(id).to_s
 end
 
 def delete
-	list
+	# list
 	puts "Which id number would you like to delete?"
 	id = STDIN.gets.chomp
 	contact_string = show(id)
-	Contact.destroy(id)
+	Contact.find(id).destroy
 	puts "Contact deleted: #{contact_string}"
 end
 
 def loop_over_results(array)
 	array.each do |row|
-		puts "#{row.id}: #{row.firstname} #{row.lastname} (#{row.email})"
+		puts row.to_s
 	end
 end
 
 def list
-	instance_result = Contact.all
-	loop_over_results(instance_result)
+	all_instances = Contact.all
+	loop_over_results(all_instances)
 end
 
 def find
