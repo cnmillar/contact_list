@@ -28,14 +28,16 @@ def new_contact
 	end
 
 	new_contact = Contact.create(lastname: lastname, firstname: firstname, email: email) 
-	new_phone = Phone.create(label: label.first, phone_number: phone.first, contact: new_contact)
+ 
+	label.zip(phone).each do |pair|
+		new_phone = Phone.create(label: pair[0], phone_number: pair[1], contact: new_contact)
+	end
 
 end
 
 # 
 def show(id)
-	instance_result = Contact.find(id)
-	"#{instance_result.id}: #{instance_result.firstname} #{instance_result.lastname} (#{instance_result.email})"
+	contact_info = Contact.find(id).to_s
 end
 
 def delete
@@ -70,9 +72,9 @@ def find
 end
 
 def update
-	list
+	# list
 	puts "Which contact's id number would you like to update?"
-	id = STDIN.gets.chomp
+	id = STDIN.gets.chomp.to_i
 	puts "What would you like the contact's first name to be?"
 	firstname = STDIN.gets.chomp
 	puts "What would you like the contact's last name to be?"
@@ -80,7 +82,27 @@ def update
 	puts "What would you like the contact's email to be??"
 	email = STDIN.gets.chomp
 
-	Contact.update(id, firstname, lastname, email)
+	contact_to_update = Contact.find(id)
+	contact_to_update.update(firstname: firstname, lastname: lastname, email: email)
+	phone_numbers  = contact_to_update.phones 		# gives the Phone instances that belong to contact_to_update
+
+	if phone_numbers.empty?
+		puts "Would you like to add a phone number?"
+		answer = STDIN.gets.chomp.downcase
+		if answer == "yes"
+			puts "What would you like the number to be?"
+			new_number = STDIN.gets.chomp
+			puts "What would you like its label to be?"
+			new_label = STDIN.gets.chomp
+			Phone.create(label: new_label, phone_number: new_number, contact: contact_to_update)
+		end
+	else
+		phone_numbers.each do |phone|
+			puts "What would you like to change #{phone[:phone_number]} to?"
+			new_number = STDIN.gets.chomp
+			phone.update(phone_number: new_number)
+		end
+	end
 end
 
 case ARGV[0].downcase

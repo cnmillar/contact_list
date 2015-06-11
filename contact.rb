@@ -6,6 +6,13 @@ class Contact < ActiveRecord::Base
 
   has_many :phones
 
+  def to_s
+    "#{id}: #{firstname} #{lastname}, #{email}, #{phone_string}"
+  end
+
+  def phone_string
+    phones.map(&:to_s).join(', ')
+  end
 	# attr_reader :firstname, :lastname, :email, :id
 
 	# Instance variable to initialize new instance of Contact class
@@ -19,9 +26,9 @@ class Contact < ActiveRecord::Base
 # ### CLASS METHODS ###
 	
 # 	# Update contact
-# 	def self.update(id, firstname, lastname, email)
-# 		# pg_result = @@conn.exec_params("UPDATE contacts SET firstname='#{firstname}', lastname='#{lastname}', email='#{email}' WHERE id=#{id}")  	
-# 	end
+	# def self.update(id, firstname, lastname, email)
+	# 	pg_result = @@conn.exec_params("UPDATE contacts SET firstname='#{firstname}', lastname='#{lastname}', email='#{email}' WHERE id=#{id}")  	
+	# end
 
 # 	# Convert pg object to an array of class instances
 # 	def self.to_array(pg_result)

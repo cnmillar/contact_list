@@ -5,6 +5,10 @@ class Phone < ActiveRecord::Base
 
 	belongs_to :contact
 
+	def to_s
+		"#{label}: #{phone_number}"
+	end
+
 	# attr_reader :contact_id, :label, :phone, :id
 
 	# def initialize(contact_id, label, phone, id = nil)
