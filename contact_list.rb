@@ -1,9 +1,9 @@
 #!/usr/local/rvm/rubies/ruby-2.1.3/bin/ruby
+require 'active_record'
+require './setup'
 require './contact'
 require './phone'
 require 'pry'
-
-Connection.connect
 
 def new_contact
 	puts "What is the first name of your new contact?"
@@ -27,12 +27,12 @@ def new_contact
 		end
 	end
 
-	new_contact = Contact.new(lastname, firstname, email) 
-	contact_id = new_contact.save!		
-	new_phone = Phone.new(contact_id, label, phone)
-	new_phone.save!
+	new_contact = Contact.create(lastname: lastname, firstname: firstname, email: email) 
+	new_phone = Phone.create(label: label.first, phone_number: phone.first, contact: new_contact)
+
 end
 
+# 
 def show(id)
 	instance_result = Contact.find(id)
 	"#{instance_result.id}: #{instance_result.firstname} #{instance_result.lastname} (#{instance_result.email})"
@@ -112,5 +112,3 @@ case ARGV[0].downcase
 	when "find"
 		find
 end
-
-Connection.disconnect
